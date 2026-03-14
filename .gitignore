@@ -1,9 +1,16 @@
-backend/Lib
-backend/Scripts
-backend/__pycache__
-backend/.env
+# Python virtual environment
+backend/Lib/
+backend/Scripts/
+backend/__pycache__/
 backend/pyvenv.cfg
 
-node_modules
-.next
+# Environment variables
+backend/.env
 .env
+
+# Python cache
+__pycache__/
+
+# Node
+node_modules/
+.next
