@@ -1,0 +1,9 @@
+backend/Lib
+backend/Scripts
+backend/__pycache__
+backend/.env
+backend/pyvenv.cfg
+
+node_modules
+.next
+.env
