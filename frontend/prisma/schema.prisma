@@ -1,0 +1,260 @@
+// BuildForge AI — Prisma Schema v2
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Plan {
+  free
+  pro
+  team
+  enterprise
+}
+
+enum AppType {
+  website
+  tool
+  saas
+  dashboard
+  ai_app
+  crm
+  internal_tool
+}
+
+enum AIModel {
+  gpt4o
+  gpt4o_mini
+  gemini_flash
+  gemini_pro
+}
+
+enum AgentType {
+  builder
+  refactor
+  ui
+  ux
+  deploy
+  debug
+  security
+  github
+  seo
+  startup
+  performance
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscription  Subscription?
+  projects      Project[]
+  creditUsages  CreditUsage[]
+  githubToken   String?
+
+  @@map("users")
+}
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String    @unique
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  plan                 Plan      @default(free)
+  creditsRemaining     Int       @default(50)
+  creditsTotal         Int       @default(50)
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creditUsages CreditUsage[]
+
+  @@map("subscriptions")
+}
+
+// Tracks every credit deduction for analytics and audit
+model CreditUsage {
+  id             String   @id @default(cuid())
+  userId         String
+  subscriptionId String?
+  action         String   // matches CreditAction keys from lib/credits.ts
+  creditsUsed    Int
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+  @@map("credit_usages")
+}
+
+model Project {
+  id           String    @id @default(cuid())
+  userId       String
+  name         String
+  description  String?
+  appType      AppType   @default(website)
+  framework    String    @default("html")
+  deployUrl    String?
+  githubRepo   String?
+  integrations String[]  @default([])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions      Version[]
+  promptHistory PromptHistory[]
+  recentOpens   RecentProject[]
+
+  @@map("projects")
+}
+
+// Tracks recently opened projects per user for quick switching
+model RecentProject {
+  id           String   @id @default(cuid())
+  userId       String
+  projectId    String
+  lastOpenedAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@index([userId, lastOpenedAt])
+  @@map("recent_projects")
+}
+
+// DB-backed prompt history per project
+model PromptHistory {
+  id            String   @id @default(cuid())
+  projectId     String
+  userId        String
+  prompt        String   @db.Text
+  model         AIModel  @default(gpt4o)
+  resultSummary String?
+  versionId     String?
+  createdAt     DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+  @@index([userId, createdAt])
+  @@map("prompt_history")
+}
+
+model Version {
+  id          String   @id @default(cuid())
+  projectId   String
+  versionNum  Int
+  prompt      String   @db.Text
+  files       Json     // { "index.html": "...", "styles.css": "...", ... }
+  model       AIModel  @default(gpt4o)
+  agent       AgentType @default(builder)
+  creditsUsed Int      @default(1)
+  createdAt   DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("versions")
+}
+
+model Integration {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String
+  name      String   // stripe | supabase | openai | sendgrid | slack
+  config    Json     @default("{}")
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([projectId, name])
+  @@map("integrations")
+}
+
+// Health snapshot — tracks project health over time for trend charts
+model HealthSnapshot {
+  id              String   @id @default(cuid())
+  projectId       String
+  versionNum      Int
+  overall         Int
+  security        Int
+  performance     Int
+  maintainability Int
+  seo             Int
+  accessibility   Int
+  issueCount      Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  @@index([projectId, createdAt])
+  @@map("health_snapshots")
+}
+
+// Admin activity log — tracks all admin actions for audit trail
+model AdminLog {
+  id         String   @id @default(cuid())
+  adminId    String
+  action     String   // credit_update | user_suspend | user_delete | data_export | role_change | issue_resolve
+  targetId   String?  // userId or projectId affected
+  targetType String?  // user | project | subscription
+  details    Json     @default("{}")
+  createdAt  DateTime @default(now())
+
+  @@index([adminId, createdAt])
+  @@index([action, createdAt])
+  @@map("admin_logs")
+}
+
+// Platform issue tracker — generation/deploy/repair failures
+model Issue {
+  id          String   @id @default(cuid())
+  type        String   // generation_failure | repair_failure | deploy_error | system_error
+  title       String
+  description String   @db.Text
+  userId      String?
+  projectId   String?
+  status      String   @default("open") // open | in_progress | resolved
+  severity    String   @default("medium") // low | medium | high | critical
+  resolvedBy  String?
+  resolvedAt  DateTime?
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([type, status])
+  @@map("issues")
+}
+
+// Background job tracking (in-memory store used in dev; swap for Redis in prod)
+model Job {
+  id          String   @id @default(cuid())
+  type        String   // generate | autonomous_pipeline | github_import | deploy | seo | startup
+  status      String   @default("queued") // queued | running | completed | failed | cancelled
+  userId      String
+  projectId   String?
+  payload     Json     @default("{}")
+  result      Json?
+  error       String?
+  creditCost  Int      @default(1)
+  attempts    Int      @default(0)
+  maxAttempts Int      @default(3)
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, status])
+  @@map("jobs")
+}

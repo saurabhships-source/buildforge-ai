@@ -1,183 +1,155 @@
-'use client'
-
 import Link from 'next/link'
-import { Sparkles, ArrowRight, Twitter, Github, Linkedin } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Sparkles } from 'lucide-react'
 
-const footerLinks = {
-  product: [
-    { label: 'Features', href: '#features' },
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'API', href: '#' },
-    { label: 'Integrations', href: '#' },
-    { label: 'Changelog', href: '#' },
-  ],
-  company: [
-    { label: 'About', href: '#' },
-    { label: 'Blog', href: '#' },
-    { label: 'Careers', href: '#' },
-    { label: 'Press', href: '#' },
-    { label: 'Contact', href: '#' },
-  ],
-  resources: [
-    { label: 'Documentation', href: '#' },
-    { label: 'Help Center', href: '#' },
-    { label: 'Community', href: '#' },
-    { label: 'Templates', href: '#' },
-    { label: 'Guides', href: '#' },
-  ],
-  legal: [
-    { label: 'Privacy Policy', href: '#' },
-    { label: 'Terms of Service', href: '#' },
-    { label: 'Cookie Policy', href: '#' },
-    { label: 'Security', href: '#' },
-  ],
-}
-
-const socialLinks = [
-  { icon: Twitter, href: '#', label: 'Twitter' },
-  { icon: Github, href: '#', label: 'GitHub' },
-  { icon: Linkedin, href: '#', label: 'LinkedIn' },
+const NAV = [
+  {
+    heading: 'Product',
+    links: [
+      { label: 'AI Website Builder',    href: '/product/ai-website-builder' },
+      { label: 'AI SaaS Builder',       href: '/product/ai-saas-builder' },
+      { label: 'AI App Generator',      href: '/product/ai-app-generator' },
+      { label: 'AI Tool Generator',     href: '/product/ai-tool-generator' },
+      { label: 'AI Software Studio',    href: '/product/ai-software-studio' },
+      { label: 'AI Startup Generator',  href: '/product/ai-startup-generator' },
+      { label: 'Pricing',               href: '/pricing' },
+      { label: 'Templates',             href: '/templates' },
+    ],
+  },
+  {
+    heading: 'Use Cases',
+    links: [
+      { label: 'Build SaaS with AI',        href: '/use-cases/build-saas-with-ai' },
+      { label: 'Create AI Tools',           href: '/use-cases/create-ai-tools' },
+      { label: 'Launch Startups with AI',   href: '/use-cases/launch-startups-with-ai' },
+      { label: 'Build Internal Tools',      href: '/use-cases/build-internal-tools' },
+      { label: 'Build Dashboards',          href: '/use-cases/build-dashboards' },
+      { label: 'Generate Landing Pages',    href: '/use-cases/generate-landing-pages' },
+    ],
+  },
+  {
+    heading: 'Platform',
+    links: [
+      { label: 'AI Product Factory',       href: '/platform/ai-product-factory' },
+      { label: 'Multi-Agent AI System',    href: '/platform/multi-agent-ai' },
+      { label: 'Self-Healing Code Repair', href: '/platform/self-healing-repair' },
+      { label: 'AI Growth Engine',         href: '/platform/ai-growth-engine' },
+      { label: 'One-Click Deployment',     href: '/platform/one-click-deployment' },
+    ],
+  },
+  {
+    heading: 'Developers',
+    links: [
+      { label: 'API Documentation',  href: '/docs/api' },
+      { label: 'SDK',                href: '/docs/sdk' },
+      { label: 'Integration Guides', href: '/docs/integrations' },
+      { label: 'CLI',                href: '/docs/cli' },
+      { label: 'Developer Platform', href: '/solutions/ai-developer-platform' },
+    ],
+  },
+  {
+    heading: 'Resources',
+    links: [
+      { label: 'AI Builder Blog',    href: '/blog' },
+      { label: 'Templates Library',  href: '/templates' },
+      { label: 'Help Center',        href: '/help' },
+      { label: 'Tutorials',          href: '/docs/tutorials' },
+      { label: 'Case Studies',       href: '/case-studies' },
+    ],
+  },
+  {
+    heading: 'Company',
+    links: [
+      { label: 'About BuildForge', href: '/about' },
+      { label: 'Careers',          href: '/careers' },
+      { label: 'Press',            href: '/press' },
+      { label: 'Contact',          href: '/contact' },
+      { label: 'Partners',         href: '/partners' },
+    ],
+  },
+  {
+    heading: 'Legal',
+    links: [
+      { label: 'Privacy Policy',   href: '/legal/privacy' },
+      { label: 'Terms of Service', href: '/legal/terms' },
+      { label: 'Cookie Policy',    href: '/legal/cookies' },
+      { label: 'Security',         href: '/legal/security' },
+      { label: 'Compliance',       href: '/legal/compliance' },
+    ],
+  },
 ]
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-border/40 bg-muted/30">
-      {/* Newsletter section */}
-      <div className="border-b border-border/40">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 py-12 sm:px-6 md:flex-row lg:px-8">
-          <div>
-            <h3 className="text-xl font-bold">Stay up to date</h3>
-            <p className="mt-1 text-muted-foreground">
-              Get the latest news and updates from BuildForge AI.
-            </p>
-          </div>
-          <form className="flex w-full max-w-md gap-2">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              className="h-11 bg-background"
-            />
-            <Button type="submit" className="h-11 gap-2 px-6 shadow-lg shadow-primary/25">
-              Subscribe
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </form>
-        </div>
-      </div>
+    <footer className="border-t border-slate-200 bg-slate-50 dark:border-white/8 dark:bg-[#060609]">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
 
-      {/* Main footer */}
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-6">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="group flex items-center gap-2.5">
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/25">
-                <Sparkles className="h-5 w-5 text-white" />
+        {/* Brand row */}
+        <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-sm">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-md">
+                <Sparkles className="h-4 w-4 text-white" />
               </div>
-              <span className="text-xl font-bold tracking-tight">
-                Build<span className="text-primary">Forge</span> AI
+              <span className="text-[15px] font-bold text-slate-900 dark:text-white">
+                Build<span className="text-violet-600 dark:text-violet-400">Forge</span> AI
               </span>
             </Link>
-            <p className="mt-4 max-w-xs text-sm text-muted-foreground leading-relaxed">
-              Build AI-powered websites, tools, and software in seconds. No coding required.
+            <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+              The AI platform for building websites, SaaS products, and software tools.
+              Generate full-stack applications and launch your startup — from a single prompt.
             </p>
-            
-            {/* Social links */}
-            <div className="mt-6 flex gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-border/50 bg-card text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
-                >
-                  <social.icon className="h-4 w-4" />
-                </a>
-              ))}
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/signup"
+              className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700 transition-colors"
+            >
+              Start Building Free
+            </Link>
+            <Link
+              href="/pricing"
+              className="rounded-lg border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+            >
+              View Pricing
+            </Link>
+          </div>
+        </div>
+
+        {/* Nav grid */}
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-7">
+          {NAV.map((col) => (
+            <div key={col.heading}>
+              <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                {col.heading}
+              </h3>
+              <ul className="space-y-2">
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <Link
+                      href={l.href}
+                      className="text-sm text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-
-          {/* Links */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">Product</h3>
-            <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
-                <li key={link.label}>
-                  <Link 
-                    href={link.href} 
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">Company</h3>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.label}>
-                  <Link 
-                    href={link.href} 
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">Resources</h3>
-            <ul className="space-y-3">
-              {footerLinks.resources.map((link) => (
-                <li key={link.label}>
-                  <Link 
-                    href={link.href} 
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">Legal</h3>
-            <ul className="space-y-3">
-              {footerLinks.legal.map((link) => (
-                <li key={link.label}>
-                  <Link 
-                    href={link.href} 
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          ))}
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/40 pt-8 md:flex-row">
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} BuildForge AI. All rights reserved.
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-8 sm:flex-row dark:border-white/8">
+          <p className="text-sm text-slate-400 dark:text-slate-500">
+            © 2026 BuildForge AI. All rights reserved.
           </p>
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <span className="flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-              </span>
-              All systems operational
+          <div className="flex items-center gap-2 text-sm text-slate-400 dark:text-slate-500">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
             </span>
+            All systems operational
           </div>
         </div>
       </div>

@@ -3,68 +3,58 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard,
-  Wand2,
-  BarChart3,
-  CreditCard,
-  Settings,
-  LogOut,
-  Sparkles,
-  Shield,
+  LayoutDashboard, Wand2, BarChart3, CreditCard,
+  Settings, LogOut, Sparkles, Shield, FolderOpen, Plug, Globe2, Users, TrendingUp, History, Cpu,
 } from 'lucide-react'
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarSeparator,
+  Sidebar, SidebarContent, SidebarFooter, SidebarGroup,
+  SidebarGroupContent, SidebarGroupLabel, SidebarHeader,
+  SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator,
 } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useAuth } from '@/lib/auth-context'
 
 const menuItems = [
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-  },
-  {
-    title: 'AI Builder',
-    href: '/dashboard/builder',
-    icon: Wand2,
-  },
-  {
-    title: 'Usage',
-    href: '/dashboard/usage',
-    icon: BarChart3,
-  },
-  {
-    title: 'Billing',
-    href: '/dashboard/billing',
-    icon: CreditCard,
-  },
-  {
-    title: 'Settings',
-    href: '/dashboard/settings',
-    icon: Settings,
-  },
+  { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { title: 'AI Builder', href: '/dashboard/builder', icon: Wand2 },
+  { title: 'Projects', href: '/dashboard/projects', icon: FolderOpen },
+  { title: 'Analytics', href: '/dashboard/analytics', icon: TrendingUp },
+  { title: 'Teams', href: '/dashboard/teams', icon: Users },
+  { title: 'Prompt History', href: '/dashboard/prompt-history', icon: History },
+  { title: 'System', href: '/dashboard/system', icon: Cpu },
+  { title: 'AI Hub', href: '/hub', icon: Globe2 },
+  { title: 'Integrations', href: '/dashboard/integrations', icon: Plug },
+  { title: 'Usage', href: '/dashboard/usage', icon: BarChart3 },
+  { title: 'Billing', href: '/dashboard/billing', icon: CreditCard },
+  { title: 'Settings', href: '/dashboard/settings', icon: Settings },
 ]
+
+const hasClerkKey =
+  typeof process !== 'undefined' &&
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_') &&
+  !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.includes('your_clerk')
+
+function useSignOut() {
+  if (hasClerkKey) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { useClerk } = require('@clerk/nextjs')
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { signOut } = useClerk()
+    return signOut
+  }
+  return () => { window.location.href = '/' }
+}
 
 export function DashboardSidebar() {
   const pathname = usePathname()
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
+  const signOut = useSignOut()
 
   const initials = user?.name
-    .split(' ')
-    .map((n) => n[0])
+    ?.split(' ')
+    .map(n => n[0])
     .join('')
-    .toUpperCase() || 'U'
+    .toUpperCase() ?? 'U'
 
   return (
     <Sidebar>
@@ -84,11 +74,7 @@ export function DashboardSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.href}
-                    tooltip={item.title}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
                     <Link href={item.href}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -108,11 +94,7 @@ export function DashboardSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={pathname === '/admin'}
-                      tooltip="Admin Panel"
-                    >
+                    <SidebarMenuButton asChild isActive={pathname === '/admin'} tooltip="Admin Panel">
                       <Link href="/admin">
                         <Shield />
                         <span>Admin Panel</span>
@@ -129,20 +111,18 @@ export function DashboardSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent">
+            <SidebarMenuButton size="lg">
               <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                  {initials}
-                </AvatarFallback>
+                <AvatarFallback className="bg-primary/10 text-primary text-xs">{initials}</AvatarFallback>
               </Avatar>
               <div className="flex flex-1 flex-col text-left text-sm">
                 <span className="truncate font-medium">{user?.name}</span>
-                <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
+                <span className="truncate text-xs text-muted-foreground capitalize">{user?.plan} plan</span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={logout} tooltip="Logout">
+            <SidebarMenuButton onClick={() => (hasClerkKey ? signOut({ redirectUrl: '/' }) : signOut())} tooltip="Logout">
               <LogOut />
               <span>Logout</span>
             </SidebarMenuButton>

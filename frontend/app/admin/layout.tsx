@@ -1,69 +1,43 @@
-'use client'
-
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { AuthProvider, useAuth } from '@/lib/auth-context'
+import { auth } from '@clerk/nextjs/server'
+import { redirect } from 'next/navigation'
+import { db } from '@/lib/db'
+import { AuthProvider } from '@/lib/auth-context'
+import { ClerkProviderSafe } from '@/lib/clerk-provider-safe'
 import { DashboardSidebar } from '@/components/dashboard-sidebar'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { Skeleton } from '@/components/ui/skeleton'
 
-function AdminContent({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth()
-  const router = useRouter()
+const hasClerkKey =
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_') &&
+  !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.includes('your_')
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.push('/login')
-    } else if (!isLoading && user?.role !== 'admin') {
-      router.push('/dashboard')
-    }
-  }, [user, isLoading, router])
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  if (hasClerkKey) {
+    const { userId } = await auth()
+    if (!userId) redirect('/login')
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="space-y-4 w-full max-w-md">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-8 w-2/3" />
-        </div>
-      </div>
-    )
+    const user = await db.user.findUnique({ where: { clerkId: userId } })
+    if (!user || user.role !== 'admin') redirect('/dashboard')
   }
-
-  if (!user || user.role !== 'admin') {
-    return null
-  }
+  // Dev mode: no Clerk keys configured — allow access for local development
 
   return (
-    <SidebarProvider>
-      <DashboardSidebar />
-      <SidebarInset>
-        <header className="flex h-14 items-center gap-4 border-b border-border/40 px-4">
-          <SidebarTrigger />
-          <Separator orientation="vertical" className="h-6" />
-          <span className="text-sm font-medium text-muted-foreground">Admin Panel</span>
-          <div className="flex-1" />
-          <ThemeToggle />
-        </header>
-        <main className="flex-1 overflow-auto p-6">
-          {children}
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
-  )
-}
-
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <AuthProvider>
-      <AdminContent>{children}</AdminContent>
-    </AuthProvider>
+    <ClerkProviderSafe>
+      <AuthProvider>
+        <SidebarProvider>
+          <DashboardSidebar />
+          <SidebarInset>
+            <header className="flex h-14 items-center gap-4 border-b border-border/40 px-4">
+              <SidebarTrigger />
+              <Separator orientation="vertical" className="h-6" />
+              <div className="flex-1" />
+              <ThemeToggle />
+            </header>
+            <main className="flex-1 overflow-auto p-6">{children}</main>
+          </SidebarInset>
+        </SidebarProvider>
+      </AuthProvider>
+    </ClerkProviderSafe>
   )
 }

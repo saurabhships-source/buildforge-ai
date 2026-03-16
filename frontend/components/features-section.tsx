@@ -1,128 +1,118 @@
-'use client'
+import { Cpu, Bot, Wrench, Rocket, Store, Code2, TrendingUp, LayoutDashboard } from 'lucide-react'
 
-import { Wand2, Bot, Sparkles, Building2, Plug, Globe } from 'lucide-react'
-import { cn } from '@/lib/utils'
-
-const features = [
+const FEATURES = [
   {
-    icon: Wand2,
-    title: 'AI Website Builder',
-    description: 'Generate complete, responsive websites from simple text descriptions. Landing pages, portfolios, and more.',
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-500/10',
-    borderColor: 'group-hover:border-blue-500/30',
+    icon: Cpu,
+    title: 'AI Product Factory',
+    desc: 'Generates complete Next.js SaaS apps — frontend, backend, database, and auth — from a single prompt using a 10-stage AI pipeline.',
+    color: 'text-violet-500',
+    bg: 'bg-violet-50 dark:bg-violet-500/10',
+    border: 'border-violet-200 dark:border-violet-500/20',
+    badge: 'Core',
   },
   {
     icon: Bot,
-    title: 'Smart Tool Generator',
-    description: 'Create calculators, converters, and interactive tools instantly. Perfect for any use case.',
+    title: 'Multi-Agent AI System',
+    desc: 'Five specialized agents collaborate: Product Brain → Architect → Builder → Repair → Deploy. Each agent is an expert in its domain.',
+    color: 'text-indigo-500',
+    bg: 'bg-indigo-50 dark:bg-indigo-500/10',
+    border: 'border-indigo-200 dark:border-indigo-500/20',
+    badge: 'New',
+  },
+  {
+    icon: Wrench,
+    title: 'Self-Healing Code Repair',
+    desc: 'Automatically detects TypeScript errors, missing exports, and broken imports. Generates fixes, applies patches, and rebuilds — zero manual effort.',
     color: 'text-amber-500',
-    bgColor: 'bg-amber-500/10',
-    borderColor: 'group-hover:border-amber-500/30',
+    bg: 'bg-amber-50 dark:bg-amber-500/10',
+    border: 'border-amber-200 dark:border-amber-500/20',
+    badge: 'AI',
   },
   {
-    icon: Globe,
-    title: 'Software Builder',
-    description: 'Build full-featured web applications with dashboards, forms, and complex functionality.',
-    color: 'text-violet-500',
-    bgColor: 'bg-violet-500/10',
-    borderColor: 'group-hover:border-violet-500/30',
-  },
-  {
-    icon: Sparkles,
-    title: 'Smart AI Prompts',
-    description: 'Optimized templates and suggestions to help you create better outputs faster.',
-    color: 'text-rose-500',
-    bgColor: 'bg-rose-500/10',
-    borderColor: 'group-hover:border-rose-500/30',
-  },
-  {
-    icon: Building2,
-    title: 'Enterprise Ready',
-    description: 'Built for scale with SSO, team management, and enterprise-grade security.',
+    icon: Rocket,
+    title: 'One-Click Deployment',
+    desc: 'Deploy to Vercel or Netlify instantly. Automatic CI/CD, custom domains, environment variables, and deployment queue with retry logic.',
     color: 'text-emerald-500',
-    bgColor: 'bg-emerald-500/10',
-    borderColor: 'group-hover:border-emerald-500/30',
+    bg: 'bg-emerald-50 dark:bg-emerald-500/10',
+    border: 'border-emerald-200 dark:border-emerald-500/20',
+    badge: 'Fast',
   },
   {
-    icon: Plug,
-    title: 'API Integration',
-    description: 'Connect your AI creations to any app or workflow with our powerful REST API.',
+    icon: Cpu,
+    title: 'Autonomous Startup Generator',
+    desc: 'From one idea, generates a complete startup: product concept, market analysis, landing page, pricing model, and go-to-market strategy.',
+    color: 'text-pink-500',
+    bg: 'bg-pink-50 dark:bg-pink-500/10',
+    border: 'border-pink-200 dark:border-pink-500/20',
+    badge: 'New',
+  },
+  {
+    icon: TrendingUp,
+    title: 'AI Growth Engine',
+    desc: 'Generates SEO strategy, blog content, Twitter threads, LinkedIn posts, Reddit campaigns, email sequences, and lead capture forms automatically.',
     color: 'text-cyan-500',
-    bgColor: 'bg-cyan-500/10',
-    borderColor: 'group-hover:border-cyan-500/30',
+    bg: 'bg-cyan-50 dark:bg-cyan-500/10',
+    border: 'border-cyan-200 dark:border-cyan-500/20',
+    badge: 'Growth',
+  },
+  {
+    icon: Store,
+    title: 'Template Marketplace',
+    desc: 'Browse, clone, and remix 100+ production-ready SaaS templates. Publish your own templates and earn from the community.',
+    color: 'text-orange-500',
+    bg: 'bg-orange-50 dark:bg-orange-500/10',
+    border: 'border-orange-200 dark:border-orange-500/20',
+    badge: 'Community',
+  },
+  {
+    icon: Code2,
+    title: 'Developer IDE',
+    desc: 'Full Monaco editor with file explorer, AI chat, version history, and live preview. Edit generated code directly in the browser.',
+    color: 'text-slate-500',
+    bg: 'bg-slate-50 dark:bg-slate-500/10',
+    border: 'border-slate-200 dark:border-slate-500/20',
+    badge: 'Pro',
   },
 ]
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="relative px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-      {/* Background */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-muted/50 to-transparent" />
-      
+    <section id="features" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50/50 dark:bg-white/[0.01]">
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm font-medium text-accent">
-            Powerful Features
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400 mb-4">
+            Platform Features
           </div>
-          <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            Build anything with AI
+          <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+            Everything you need to build
+            <br />
+            <span className="bg-gradient-to-r from-violet-600 to-cyan-500 bg-clip-text text-transparent dark:from-violet-400 dark:to-cyan-400">
+              and grow a SaaS startup
+            </span>
           </h2>
-          <p className="mt-4 text-pretty text-lg text-muted-foreground">
-            From simple tools to complex applications, create anything you can imagine.
+          <p className="mt-5 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+            BuildForge is the only platform that handles product generation, code repair, deployment, and marketing in one unified AI system.
           </p>
         </div>
 
-        {/* Features grid */}
-        <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature, index) => (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {FEATURES.map((f) => (
             <div
-              key={index}
-              className={cn(
-                "group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5",
-                feature.borderColor
-              )}
+              key={f.title}
+              className={`group relative rounded-2xl border ${f.border} ${f.bg} p-5 transition-all hover:-translate-y-1 hover:shadow-lg`}
             >
-              {/* Gradient line at top */}
-              <div className={cn(
-                "absolute inset-x-0 top-0 h-1 bg-gradient-to-r opacity-0 transition-opacity group-hover:opacity-100",
-                feature.color === 'text-blue-500' && "from-blue-500 to-cyan-500",
-                feature.color === 'text-amber-500' && "from-amber-500 to-orange-500",
-                feature.color === 'text-violet-500' && "from-violet-500 to-purple-500",
-                feature.color === 'text-rose-500' && "from-rose-500 to-pink-500",
-                feature.color === 'text-emerald-500' && "from-emerald-500 to-teal-500",
-                feature.color === 'text-cyan-500' && "from-cyan-500 to-blue-500",
-              )} />
-              
-              {/* Icon */}
-              <div className={cn(
-                "mb-6 inline-flex h-14 w-14 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110",
-                feature.bgColor,
-                feature.color
-              )}>
-                <feature.icon className="h-7 w-7" />
+              <div className="flex items-start justify-between mb-3">
+                <div className={`flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-sm dark:bg-white/10`}>
+                  <f.icon className={`h-4.5 w-4.5 ${f.color}`} />
+                </div>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${f.color} bg-white/60 dark:bg-white/10`}>
+                  {f.badge}
+                </span>
               </div>
-              
-              {/* Content */}
-              <h3 className="mb-3 text-xl font-semibold tracking-tight">
-                {feature.title}
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {feature.description}
-              </p>
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-1.5">{f.title}</h3>
+              <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">{f.desc}</p>
             </div>
           ))}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <p className="text-muted-foreground">
-            And many more features being added every week.{' '}
-            <a href="/signup" className="font-medium text-primary underline-offset-4 hover:underline">
-              Get started for free
-            </a>
-          </p>
         </div>
       </div>
     </section>

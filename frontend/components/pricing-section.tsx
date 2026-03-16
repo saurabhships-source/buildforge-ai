@@ -1,207 +1,237 @@
-'use client'
+﻿'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import { Check, Sparkles, Zap, Building2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
+import { useState } from 'react'
+import { Check, Zap, RefreshCw } from 'lucide-react'
 
-const plans = [
+const PLANS = [
   {
-    name: 'Starter',
-    icon: Sparkles,
-    description: 'Perfect for getting started',
-    monthlyPrice: 19,
-    yearlyPrice: 190,
+    name: 'Free Starter',
+    price: { monthly: 0, annual: 0 },
+    credits: 50,
+    desc: 'Try BuildForge and build your first AI project.',
+    cta: 'Start Free',
+    href: '/signup',
+    highlight: false,
+    badge: null,
     features: [
-      '100 AI generations/month',
-      'Basic AI tools',
-      'Email support',
-      'API access',
-      'Community access',
+      '50 credits / month',
+      '2 AI-generated projects',
+      'Basic templates',
+      'Community support',
+      'Preview deployments',
+      '1 GB storage',
     ],
-    popular: false,
-    gradient: 'from-slate-500 to-slate-600',
-    cta: 'Start Free Trial',
   },
   {
     name: 'Pro',
-    icon: Zap,
-    description: 'Best for growing teams',
-    monthlyPrice: 49,
-    yearlyPrice: 490,
+    price: { monthly: 19, annual: 15 },
+    credits: 500,
+    desc: 'For founders and indie hackers shipping real products.',
+    cta: 'Start 14-Day Pro Trial',
+    href: '/signup?plan=pro',
+    highlight: true,
+    badge: 'Most Popular',
     features: [
-      '500 AI generations/month',
-      'Advanced AI tools',
+      '500 credits / month',
+      'Unlimited projects',
+      'All templates + marketplace',
+      'AI Growth Engine',
+      'Self-healing code repair',
       'Priority support',
-      'Full API access',
-      'Custom templates',
-      'Team collaboration',
-      'Analytics dashboard',
+      'Custom domains',
+      'GitHub export',
+      '20 GB storage',
     ],
-    popular: true,
-    gradient: 'from-primary to-accent',
-    cta: 'Start Free Trial',
   },
   {
-    name: 'Enterprise',
-    icon: Building2,
-    description: 'For large organizations',
-    monthlyPrice: 99,
-    yearlyPrice: 990,
+    name: 'Team',
+    price: { monthly: 49, annual: 39 },
+    credits: 2000,
+    desc: 'For teams building and launching multiple products.',
+    cta: 'Start Team Trial',
+    href: '/signup?plan=team',
+    highlight: false,
+    badge: null,
     features: [
-      'Unlimited generations',
-      'Custom AI workflows',
-      'Dedicated support',
-      'Full API access',
-      'Custom integrations',
-      'SSO & security',
-      'SLA guarantee',
-      'Custom training',
+      '2,000 credits / month',
+      'Everything in Pro',
+      'Up to 10 team members',
+      'Startup Generator',
+      'Multi-agent AI system',
+      'Advanced analytics',
+      'SSO & audit logs',
+      '100 GB storage',
     ],
-    popular: false,
-    gradient: 'from-violet-500 to-purple-600',
-    cta: 'Contact Sales',
   },
 ]
 
+const CREDIT_COSTS = [
+  { action: 'Generate SaaS project', cost: 10 },
+  { action: 'AI code improvement', cost: 2 },
+  { action: 'Deploy project', cost: 5 },
+  { action: 'Startup Generator', cost: 15 },
+  { action: 'Growth Engine run', cost: 8 },
+]
+
 export function PricingSection() {
-  const [isYearly, setIsYearly] = useState(false)
+  const [annual, setAnnual] = useState(false)
 
   return (
-    <section id="pricing" className="relative px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-      {/* Background */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-muted/50 to-transparent" />
-      
+    <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50/50 dark:bg-white/[0.01]">
       <div className="mx-auto max-w-7xl">
+
         {/* Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm font-medium text-accent">
-            Simple Pricing
+        <div className="text-center mb-14">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400 mb-4">
+            Pricing
           </div>
-          <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            Choose your plan
+          <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+            Simple, credit-based pricing
           </h2>
-          <p className="mt-4 text-pretty text-lg text-muted-foreground">
-            Start free, upgrade when you need. Cancel anytime.
+          <p className="mt-4 text-lg text-slate-500 dark:text-slate-400">
+            Start free. Credits reset every month. Upgrade when you need more.
           </p>
 
-          {/* Billing toggle */}
-          <div className="mt-8 flex items-center justify-center gap-4">
-            <Label 
-              htmlFor="billing" 
-              className={cn(
-                "text-sm transition-colors cursor-pointer", 
-                !isYearly ? "text-foreground font-medium" : "text-muted-foreground"
-              )}
+          {/* Annual toggle */}
+          <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-slate-200 bg-white p-1 dark:border-white/10 dark:bg-white/5">
+            <button
+              onClick={() => setAnnual(false)}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+                !annual
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+              }`}
             >
               Monthly
-            </Label>
-            <Switch
-              id="billing"
-              checked={isYearly}
-              onCheckedChange={setIsYearly}
-              className="data-[state=checked]:bg-primary"
-            />
-            <Label 
-              htmlFor="billing" 
-              className={cn(
-                "flex items-center gap-2 text-sm transition-colors cursor-pointer", 
-                isYearly ? "text-foreground font-medium" : "text-muted-foreground"
-              )}
+            </button>
+            <button
+              onClick={() => setAnnual(true)}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+                annual
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+              }`}
             >
-              Yearly
-              <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                Save 20%
+              Annual
+              <span className="ml-1.5 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
+                -20%
               </span>
-            </Label>
+            </button>
           </div>
         </div>
 
-        {/* Pricing cards */}
-        <div className="mx-auto mt-12 grid max-w-lg gap-6 lg:max-w-none lg:grid-cols-3">
-          {plans.map((plan) => (
+        {/* Plans */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {PLANS.map((plan) => (
             <div
               key={plan.name}
-              className={cn(
-                "group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300",
-                plan.popular 
-                  ? "border-primary shadow-xl shadow-primary/10 scale-[1.02]" 
-                  : "border-border/50 hover:border-border hover:shadow-lg"
-              )}
+              className={`relative rounded-2xl p-7 transition-all ${
+                plan.highlight
+                  ? 'bg-gradient-to-b from-violet-600 to-indigo-700 shadow-2xl shadow-violet-500/30 ring-1 ring-violet-500/50 scale-[1.02]'
+                  : 'border border-slate-200 bg-white dark:border-white/8 dark:bg-white/3'
+              }`}
             >
-              {/* Popular badge */}
-              {plan.popular && (
-                <div className="absolute -right-12 top-6 rotate-45 bg-gradient-to-r from-primary to-accent px-12 py-1 text-xs font-semibold text-white shadow-sm">
-                  Most Popular
+              {plan.badge && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 px-3 py-1 text-[11px] font-bold text-white shadow-lg">
+                    <Zap className="h-3 w-3" />
+                    {plan.badge}
+                  </span>
                 </div>
               )}
-              
-              {/* Header */}
-              <div className="p-6 pb-0 lg:p-8 lg:pb-0">
-                <div className={cn(
-                  "mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-lg",
-                  plan.gradient
-                )}>
-                  <plan.icon className="h-6 w-6" />
-                </div>
-                <h3 className="text-xl font-bold">{plan.name}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{plan.description}</p>
-                
-                {/* Price */}
-                <div className="mt-6 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold tracking-tight lg:text-5xl">
-                    ${isYearly ? plan.yearlyPrice : plan.monthlyPrice}
-                  </span>
-                  <span className="text-muted-foreground">
-                    /{isYearly ? 'year' : 'month'}
-                  </span>
-                </div>
-                {isYearly && (
-                  <p className="mt-1 text-sm text-emerald-600 dark:text-emerald-400">
-                    Save ${(plan.monthlyPrice * 12) - plan.yearlyPrice} per year
-                  </p>
+
+              {/* Plan name + desc */}
+              <div className="mb-4">
+                <h3 className={`text-lg font-bold mb-1 ${plan.highlight ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
+                  {plan.name}
+                </h3>
+                <p className={`text-sm ${plan.highlight ? 'text-violet-200' : 'text-slate-500 dark:text-slate-400'}`}>
+                  {plan.desc}
+                </p>
+              </div>
+
+              {/* Price */}
+              <div className="mb-2">
+                <span className={`text-5xl font-bold ${plan.highlight ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
+                  ${annual ? plan.price.annual : plan.price.monthly}
+                </span>
+                <span className={`text-sm ml-1 ${plan.highlight ? 'text-violet-200' : 'text-slate-400'}`}>
+                  {plan.price.monthly === 0 ? '/ month' : '/mo'}
+                </span>
+                {annual && plan.price.monthly > 0 && (
+                  <div className={`text-xs mt-0.5 ${plan.highlight ? 'text-violet-200' : 'text-slate-400'}`}>
+                    billed annually
+                  </div>
                 )}
               </div>
-              
-              {/* Features */}
-              <div className="flex flex-1 flex-col p-6 lg:p-8">
-                <ul className="flex-1 space-y-3">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3">
-                      <div className={cn(
-                        "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
-                        plan.popular ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
-                      )}>
-                        <Check className="h-3 w-3" />
-                      </div>
-                      <span className="text-sm text-muted-foreground">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                
-                {/* CTA */}
-                <Button
-                  className={cn(
-                    "mt-8 w-full",
-                    plan.popular && "shadow-lg shadow-primary/25"
-                  )}
-                  variant={plan.popular ? 'default' : 'outline'}
-                  size="lg"
-                  asChild
-                >
-                  <Link href="/signup">{plan.cta}</Link>
-                </Button>
+
+              {/* Credit badge */}
+              <div className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold mb-5 ${
+                plan.highlight
+                  ? 'bg-white/15 text-white'
+                  : 'bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300'
+              }`}>
+                <RefreshCw className="h-3 w-3" />
+                {plan.credits.toLocaleString()} credits / month — resets monthly
               </div>
+
+              {/* CTA */}
+              <Link
+                href={plan.href}
+                className={`block w-full rounded-xl py-2.5 text-center text-sm font-semibold transition-all mb-6 ${
+                  plan.highlight
+                    ? 'bg-white text-violet-700 hover:bg-violet-50 shadow-lg'
+                    : 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100'
+                }`}
+              >
+                {plan.cta}
+              </Link>
+
+              {/* Features */}
+              <ul className="space-y-2.5">
+                {plan.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2.5">
+                    <Check className={`mt-0.5 h-4 w-4 shrink-0 ${plan.highlight ? 'text-violet-200' : 'text-emerald-500'}`} />
+                    <span className={`text-sm ${plan.highlight ? 'text-violet-100' : 'text-slate-600 dark:text-slate-300'}`}>
+                      {f}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
 
-        {/* Trust message */}
-        <p className="mt-12 text-center text-sm text-muted-foreground">
-          All plans include a 14-day free trial. No credit card required.
+        {/* Credit cost explainer */}
+        <div className="mt-14 rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/8 dark:bg-white/3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-5">
+            <div>
+              <h3 className="text-base font-semibold text-slate-900 dark:text-white">How credits work</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                Credits are used when generating apps, improving code, or deploying projects. They reset on the 1st of every month.
+              </p>
+            </div>
+            <div className="shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-400">
+              <RefreshCw className="h-3 w-3" />
+              Resets every month
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+            {CREDIT_COSTS.map((item) => (
+              <div key={item.action} className="rounded-xl border border-slate-100 bg-slate-50 p-3 dark:border-white/5 dark:bg-white/3">
+                <div className="text-lg font-bold text-violet-600 dark:text-violet-400">{item.cost}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{item.action}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="mt-8 text-center text-sm text-slate-400 dark:text-slate-500">
+          Need more credits or a custom plan?{' '}
+          <Link href="/contact" className="text-violet-600 hover:underline dark:text-violet-400">
+            Contact us for Enterprise pricing
+          </Link>
         </p>
       </div>
     </section>
